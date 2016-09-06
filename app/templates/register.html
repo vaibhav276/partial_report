@@ -1,0 +1,36 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Register</h1>
+  <form action="" method="post" name="register">
+      {{ form.csrf_token }}
+      <p>
+      {{form.first_name.label}}: {{ form.first_name(size=20) }}<br>
+			 {% for error in form.first_name.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+			 {% endfor %} <br>
+          Last Name: {{ form.last_name(size=20) }}<br>
+			 {% for error in form.last_name.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+			 {% endfor %} <br>
+          User Name: {{ form.username(size=20) }}<br>
+			 {% for error in form.username.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+			 {% endfor %} <br>
+          Age: {{ form.age(size=3) }}<br>
+			 {% for error in form.age.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+			 {% endfor %} <br>
+          Gender: {{ form.gender(size=3) }}<br>
+			 {% for error in form.gender.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+			 {% endfor %} <br>
+          Password: {{ form.password(size=20) }}<br>
+			 {% for error in form.password.errors %}
+				<span style="color: red;">[{{ error }}]</span>
+			 {% endfor %} <br>
+      </p>
+      <p><input type="submit" value="Register"></p>
+  </form>
+{% endblock %}
