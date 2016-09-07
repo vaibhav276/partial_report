@@ -3,6 +3,7 @@
 
 {% block content %}
   <h1>Register</h1>
+  <p> Already registered? <a href="login">login</a> </p>
   <form action="" method="post" name="register">
       {{ form.csrf_token }}
       <p>
@@ -33,4 +34,6 @@
       </p>
       <p><input type="submit" value="Register"></p>
   </form>
+  
+
 {% endblock %}

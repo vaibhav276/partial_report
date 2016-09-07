@@ -1,0 +1,9 @@
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<script language="javascript">
+{% for message in messages %}
+$.notify("{{ message }}");
+{% endfor %}
+</script>
+{% endif %}
+{% endwith %}

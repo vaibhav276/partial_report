@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
     <h1>main/index</h1>
+    {% if not user.username %}
+      Please <a href="login">login</a> or <a href="register">register</a>
+    {% else %}
+      Go to <a href="dashboard">Dashboard</a>
+    {% endif %}
 {% endblock %}

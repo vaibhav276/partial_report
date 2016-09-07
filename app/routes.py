@@ -39,16 +39,17 @@ def login():
                   % str(form.username.data))
             return render_template('login.html',
                                    title = 'Sign in',
-                                   form = form
+                                   form = form,
+                                   user = g.user
                                   )
         elif verify_password(form.password.data, user.password) is False:
             flash('Invalid password')
             return render_template('login.html',
                                    title = 'Sign in',
-                                   form = form
+                                   form = form,
+                                   user = g.user
                                   )
         else:
-            flash('username "%s" logged in' % form.username.data)
             session['remember_me'] = form.remember_me.data
             login_user(user, remember = form.remember_me.data)
             return redirect(request.args.get('next') or url_for('dashboard'))
