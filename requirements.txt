@@ -2,3 +2,5 @@ Flask==0.10.1
 flask-WTF
 flask-sqlalchemy===2.1
 psycopg2==2.6.1
+passlib==1.6.5
+flask-login

@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.login import LoginManager
 
 from config import config
 
@@ -11,12 +12,12 @@ class ReverseProxied(object):
     different than what is used locally.
 
     In nginx:
-    location /myprefix {
-        proxy_pass http://192.168.0.1:5001;
+    location /partial_report {
+        proxy_pass http://192.168.0.1:7000;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Scheme $scheme;
-        proxy_set_header X-Script-Name /myprefix;
+        proxy_set_header X-Script-Name /partial_report;
         }
 
     :param app: the WSGI application
@@ -42,5 +43,8 @@ app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
 app.config.from_object(config)
 db = SQLAlchemy(app)
+lm = LoginManager()
+lm.init_app(app)
+lm.login_view = 'login'
 
 from app import routes, models

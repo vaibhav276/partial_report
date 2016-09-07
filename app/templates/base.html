@@ -22,8 +22,10 @@
     <![endif]-->
   </head>
   <body>
-    {% if username %}
-    <p> Logged in user: {{ username }} </p>
+    {% if user.username %}
+    <p> Logged in user: {{ user.username }} (<a href="logout">logout</a>) </p>
+    {% else %}
+      Please <a href="login">login</a> or <a href="register">register</a>
     {% endif %}
 	 {% with messages = get_flashed_messages() %}
       {% if messages %}

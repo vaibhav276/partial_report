@@ -13,4 +13,5 @@ else:
     api.version_control(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO, api.version(SQLALCHEMY_MIGRATE_REPO))
 '''
 
+from app import db
 db.create_all()

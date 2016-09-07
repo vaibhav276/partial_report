@@ -14,5 +14,24 @@ class User(db.Model):
     password = db.Column('password', db.String(1024), index=False, unique=False)
     creation_date = db.Column('creation_date', db.Date, default=datetime.utcnow)
 
+    # Functions for LoginManager
     def __repr__(self):
         return '<User %r>' % (self.username)
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return unicode(self.id)
+        except NameError:
+            return str(self.id)
