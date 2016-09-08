@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, request, url_for, g, \
 session
 from app import app, db, models, lm
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ExperimentForm
 from utils import encrypt_password, verify_password
 from flask.ext.login import login_user, logout_user, current_user, \
 login_required
@@ -99,3 +99,20 @@ def dashboard():
     return render_template('dashboard.html',
                            title = 'Dashboard',
                            user = g.user)
+
+@app.route('/experiment', methods=['GET', 'POST'])
+@login_required
+def experiment():
+    form = ExperimentForm()
+    if form.validate_on_submit():
+        # model.Experiment.create(form.matrix_size.data)
+        return render_template('experiment.html',
+                               title = 'Experiment',
+                               user = g.user,
+                               experiment_json_data = experiment_json_data
+                              )
+    return render_template('experiment.html',
+                           title = 'New Experiment',
+                           form = form,
+                           user = g.user
+                          )

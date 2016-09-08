@@ -1,6 +1,7 @@
 from app import db
 import uuid
 from datetime import datetime
+import random
 
 class User(db.Model):
     __tablename__ = 'pr_user'
@@ -14,10 +15,12 @@ class User(db.Model):
     password = db.Column('password', db.String(1024), index=False, unique=False)
     creation_date = db.Column('creation_date', db.Date, default=datetime.utcnow)
 
-    # Functions for LoginManager
+    experiments = db.relationship('Experiment', backref='user', lazy='dynamic')
+
     def __repr__(self):
         return '<User %r>' % (self.username)
 
+    # Functions for LoginManager
     @property
     def is_authenticated(self):
         return True
@@ -35,3 +38,76 @@ class User(db.Model):
             return unicode(self.id)
         except NameError:
             return str(self.id)
+
+class Experiment(db.Model):
+    __tablename__ = 'pr_experiment'
+
+    durations_ = [20, 100, 300, 1000]
+
+    id = db.Column('id', db.String(64), primary_key=True, default=uuid.uuid4())
+    user_id = db.Column('user_id', db.String(64), db.ForeignKey('pr_user.id') )
+
+    trials = db.relationship('Trial', backref='experiment', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Experiment %r having %r trials>' % (self.id, len(self.trials))
+
+    def generate(self, num_trials = 15, data_type = 'alpha', matrix_size = 3):
+        trials = []
+        for m in range(len(self.durations_)):
+            for n in range(num_trials):
+                trial =  Trial()
+                trial.experiment_id = self.id
+                trial.duration = self.durations_[m]
+                trial.cue_row = random.randint(1, matrix_size)
+                matrix = Matrix(size = matrix_size, data_type = data_type)
+                matrix.trial_id = trial.id
+                matrix.data = matrix.generate()
+                trials.append((trial, matrix))
+
+        return trials
+
+
+class Trial(db.Model):
+    __tablename__ = 'pr_trial'
+
+    id = db.Column('id', db.String(64), primary_key=True, default=uuid.uuid4())
+    experiment_id = db.Column('experiment_id', db.String(64),
+                                db.ForeignKey('pr_experiment.id'))
+    duration = db.Column('duration', db.Integer())
+    cue_row = db.Column('cue_row', db.Integer())
+    response = db.Column('response', db.String(8))
+
+    matrix = db.relationship('Matrix', backref='trial', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Trial - cue row %r, duration %r>' % (self.cue_row,
+                                                      self.duration)
+
+class Matrix(db.Model):
+    __tablename__ = 'pr_matrix'
+
+    alpha_chars_ = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    numeric_chars_ = '0123456789'
+
+    id = db.Column('id', db.String(64), primary_key=True, default=uuid.uuid4())
+    trial_id = db.Column('trial_id', db.String(64), db.ForeignKey('pr_trial.id'))
+    size = db.Column('size', db.Integer()) # max 5
+    data_type = db.Column('data_type', db.String(16))
+    data = db.Column('data', db.String(32)) # max 25 characters
+
+    def __repr__(self):
+        return '<Matrix %r>' % (self.data)
+
+    def generate(self):
+        str = ''
+        if self.data_type == 'alpha':
+            domain = self.alpha_chars_
+        else:
+            domain = self.numeric_chars_
+        for i in range(self.size):
+            sample = random.sample(range(1, len(domain)), self.size)
+            for j in sample:
+                str += domain[j]
+        return str
+
