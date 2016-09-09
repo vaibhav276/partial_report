@@ -42,6 +42,7 @@ class ReverseProxied(object):
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
 app.config.from_object(config)
+
 db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)

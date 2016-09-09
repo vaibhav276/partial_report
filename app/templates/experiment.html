@@ -2,35 +2,36 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if not experiment_json_data %}
 {% include "header.html" %}
-<h1>{{ title }}</h1>
-  <form action="" method="post" name="login">
+<div class="container">
+  <div class="row">
+    <h1>{{ title }}</h1>
+    <form action="" method="post" name="experiment">
       {{ form.hidden_tag() }}
       <p>
       {{form.preset.label}}: {{ form.preset }}<br>
-			 {% for error in form.preset.errors %}
-				<span style="color: red;">[{{ error }}]</span>
-			 {% endfor %} <br>
+      {% for error in form.preset.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %} <br>
       </p>
       {{form.matrix_size.label}}: {{ form.matrix_size(size=5) }}<br>
-			 {% for error in form.matrix_size.errors %}
-				<span style="color: red;">[{{ error }}]</span>
-			 {% endfor %} <br>
+      {% for error in form.matrix_size.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %} <br>
       </p>
       {{form.data_type.label}}: {{ form.data_type }}<br>
-			 {% for error in form.data_type.errors %}
-				<span style="color: red;">[{{ error }}]</span>
-			 {% endfor %} <br>
+      {% for error in form.data_type.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %} <br>
       </p>
       {{form.num_trials.label}}: {{ form.num_trials(size=5) }}<br>
-			 {% for error in form.num_trials.errors %}
-				<span style="color: red;">[{{ error }}]</span>
-			 {% endfor %} <br>
+      {% for error in form.num_trials.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %} <br>
       </p>
+      <script src="static/js/experiment_form.js"></script>
       <p><input type="submit" value="Start"></p>
-  </form>
-  <script src="static/js/experiment_form.js"></script>
-{% else %}
-{% endif %}
+    </form>
+  </div>
+</div>
 {% endblock %}

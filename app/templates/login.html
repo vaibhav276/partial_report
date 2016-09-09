@@ -2,22 +2,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Sign In</h1>
-  <p> New user? <a href="register">register</a> </p>
-  <form action="" method="post" name="login">
+<div class="container">
+  <div class="row">
+    <h1>{{ title }}</h1>
+    <p> New user? <a href="register">register</a> </p>
+    <form action="" method="post" name="login">
       {{ form.hidden_tag() }}
       <p>
       {{form.username.label}}: {{ form.username(size=20) }}<br>
-			 {% for error in form.username.errors %}
-				<span style="color: red;">[{{ error }}]</span>
-			 {% endfor %} <br>
+      {% for error in form.username.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %} <br>
       </p>
       {{form.password.label}}: {{ form.password(size=20) }}<br>
-			 {% for error in form.password.errors %}
-				<span style="color: red;">[{{ error }}]</span>
-			 {% endfor %} <br>
+      {% for error in form.password.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %} <br>
       </p>
       <p>{{ form.remember_me }} Remember Me</p>
       <p><input type="submit" value="Sign In"></p>
-  </form>
+    </form>
+  </div>
+</div>
 {% endblock %}

@@ -16,8 +16,8 @@ class RegisterForm(Form):
     password = PasswordField('Password', validators=[DataRequired()])
 
 class ExperimentForm(Form):
-    data_type_ = [(1, 'Alphabets'), (2, 'Numbers')]
-    presets_ = [(1, 'Preset 1')]
+    data_type_ = [('1', 'Alphabets'), ('2', 'Numbers')]
+    presets_ = [('1', 'Preset 1')]
 
     preset = SelectField('Preset', choices=presets_,
                          validators=[DataRequired()])

@@ -14,7 +14,13 @@ def load_user(id):
 def before_request():
     g.user = current_user
 
+
+app.static_url_path = 'static/'
+
 @app.route('/')
+def root():
+    return redirect(url_for('index'))
+
 @app.route('/index')
 def index():
     return render_template('index.html',
@@ -67,7 +73,7 @@ def register():
         user = models.User.query.filter_by(username = \
                                            str(form.username.data)).first()
         if user is not None:
-            flash('username "%s" already exists. Try another one.' \
+            flash('Username %s already exists. Try another one.' \
                   % str(form.username.data))
             return redirect(url_for('register'))
         else:
@@ -105,14 +111,70 @@ def dashboard():
 def experiment():
     form = ExperimentForm()
     if form.validate_on_submit():
-        # model.Experiment.create(form.matrix_size.data)
-        return render_template('experiment.html',
-                               title = 'Experiment',
-                               user = g.user,
-                               experiment_json_data = experiment_json_data
-                              )
+        experiment = models.Experiment()
+        generated_tuples = experiment.generate(num_trials = int(form.num_trials.data),
+                       data_type = int(form.data_type.data),
+                       matrix_size = int(form.matrix_size.data)
+                      )
+
+        db.session.add(experiment)
+        for (trial, matrix) in generated_tuples:
+            db.session.add(trial)
+            db.session.add(matrix)
+
+        db.session.commit()
+
+        return redirect(url_for('experiment_trial', experiment_id =
+                                str(experiment.id)))
+
     return render_template('experiment.html',
                            title = 'New Experiment',
                            form = form,
                            user = g.user
                           )
+
+@app.route('/experiment/<string:experiment_id>')
+def experiment_trial(experiment_id):
+    experiment = models.Experiment.query.filter_by( id = experiment_id
+                                                  ).first()
+    if experiment is None:
+        flash('Experiment id %s not found. Try creating a new experiment' %
+              (experiment_id)
+             )
+        return render_template('experiment_trial.html',
+                               title = 'Experiment trial',
+                               user = g.user
+                              )
+
+    if experiment.trials_completed < len(experiment.trials.all()):
+        # Experiment not completed yet
+        next_trial_num = experiment.trials_completed + 1
+        next_trial = models.Trial.query.filter_by( experiment_id =
+                                                  experiment_id,
+                                                  sequence_number =
+                                                  next_trial_num).first()
+
+        if next_trial is None:
+            flash('ERROR: Could not find next trial')
+            return render_template('experiment_trial.html',
+                                   title = 'Experiment trial',
+                                   user = g.user
+                                  )
+
+        next_matrix = models.Matrix.query.filter_by( trial_id = next_trial.id
+                                                   ).first()
+        if next_matrix is None:
+            flash('ERROR: Could not find next trial')
+            return render_template('experiment_trial.html',
+                                   title = 'Experiment trial',
+                                   user = g.user
+                                  )
+
+    return render_template('experiment_trial.html',
+                           title = 'Experiment trial',
+                           user = g.user,
+                           experiment_id = experiment.id,
+                           trial = next_trial,
+                           matrix = next_matrix
+                          )
+

@@ -1,0 +1,15 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include "header.html" %}
+<div class="container">
+  <div class="row">
+    <p>Experiment ID: {{ experiment_id }}
+    <p>Next trial: {{ trial.id }}
+    <p>Next trial duration: {{ trial.duration }}
+    <p>Next matrix: {{ matrix.data }}
+    <p>Next matrix type: {{ matrix.data_type }}
+  </div>
+</div>
+{% endblock %}

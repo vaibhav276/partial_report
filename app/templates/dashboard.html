@@ -2,6 +2,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "header.html" %}
-<a href="experiment">Start experiment</a>
+{% include "navbar.html" %}
+<div class="container">
+  <div class="row">
+    <a href="{{ url_for('experiment') }}">Start experiment</a>
+  </div>
+</div>
 {% endblock %}

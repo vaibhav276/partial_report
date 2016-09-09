@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>main/index</h1>
+<div class="container">
+  <div class="row">
+    <h1>{{ title }}</h1>
     {% if not user.username %}
-      Please <a href="login">login</a> or <a href="register">register</a>
+    Please <a href="{{ url_for('login') }}">login</a> or <a href="{{
+    url_for('register') }}"">register</a>
     {% else %}
-      Go to <a href="dashboard">Dashboard</a>
+      Go to <a href="{{ url_for('dashboard') }}">Dashboard</a>
     {% endif %}
+  </div>
+</div>
 {% endblock %}
