@@ -2,11 +2,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "header.html" %}
+{% include "navbar.html" %}
 <div class="container">
   <div class="row">
     <h1>{{ title }}</h1>
-    <form action="" method="post" name="experiment">
+    <form action="" method="post" name="{{ url_for('experiment') }}">
       {{ form.hidden_tag() }}
       <p>
       {{form.preset.label}}: {{ form.preset }}<br>

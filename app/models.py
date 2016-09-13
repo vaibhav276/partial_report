@@ -47,6 +47,7 @@ class Experiment(db.Model):
     id = db.Column('id', db.String(64), primary_key=True, default=uuid.uuid4())
     user_id = db.Column('user_id', db.String(64), db.ForeignKey('pr_user.id') )
     trials_completed = db.Column('trials_completed', db.Integer(), default=0)
+    creation_date = db.Column('creation_date', db.Date, default=datetime.utcnow)
 
     trials = db.relationship('Trial', backref='experiment', lazy='dynamic')
 
@@ -58,16 +59,19 @@ class Experiment(db.Model):
 
     def generate(self, num_trials = 15, data_type = 'alpha', matrix_size = 3):
         trials = []
+        sequence_number = 1
         for m in range(len(self.durations_)):
             for n in range(num_trials):
                 trial =  Trial()
                 trial.experiment_id = self.id
                 trial.duration = self.durations_[m]
                 trial.cue_row = random.randint(1, matrix_size)
+                trial.sequence_number = sequence_number
                 matrix = Matrix(size = matrix_size, data_type = data_type)
                 matrix.trial_id = trial.id
                 matrix.data = matrix.generate()
                 trials.append((trial, matrix))
+                sequence_number = sequence_number + 1
 
         return trials
 

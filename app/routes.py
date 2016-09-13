@@ -1,8 +1,8 @@
 from flask import render_template, flash, redirect, request, url_for, g, \
 session
 from app import app, db, models, lm
-from .forms import LoginForm, RegisterForm, ExperimentForm
-from utils import encrypt_password, verify_password
+from .forms import LoginForm, RegisterForm, ExperimentForm, ExperimentTrialForm
+from utils import encrypt_password, verify_password, count_matches
 from flask.ext.login import login_user, logout_user, current_user, \
 login_required
 
@@ -106,6 +106,16 @@ def dashboard():
                            title = 'Dashboard',
                            user = g.user)
 
+@app.route('/history')
+@login_required
+def history():
+    experiments = models.User.query.filter_by(id = g.user.id).first().experiments.all()
+    return render_template('history.html',
+                           title = 'History',
+                           user = g.user,
+                           experiments = experiments
+                          )
+
 @app.route('/experiment', methods=['GET', 'POST'])
 @login_required
 def experiment():
@@ -133,22 +143,51 @@ def experiment():
                            user = g.user
                           )
 
-@app.route('/experiment/<string:experiment_id>')
+@app.route('/experiment/<string:experiment_id>/trial', methods=['GET', 'POST'])
 def experiment_trial(experiment_id):
     experiment = models.Experiment.query.filter_by( id = experiment_id
                                                   ).first()
+
     if experiment is None:
         flash('Experiment id %s not found. Try creating a new experiment' %
               (experiment_id)
              )
-        return render_template('experiment_trial.html',
-                               title = 'Experiment trial',
-                               user = g.user
-                              )
+        return redirect(url_for('experiment_trial'))
+
+    form = ExperimentTrialForm()
+    if form.validate_on_submit():
+        trial = models.Trial.query.filter_by( experiment_id =
+                                             experiment_id,
+                                             sequence_number =
+                                             experiment.trials_completed + 1) \
+        .first()
+
+        if trial is None:
+            flash('ERROR: Invalid trial')
+            return render_template('experiment_trial.html',
+                                   title = 'Experiment trial',
+                                   user = g.user
+                                  )
+
+        trial.response = form.trial_response.data
+        trial_matrix = trial.matrix.first()
+        trial.match_chars_num = count_matches(matrix = trial_matrix.data,
+                                              size = int(trial_matrix.size),
+                                              cue_row = int(trial.cue_row),
+                                              response = form.trial_response.data)
+
+        experiment.trials_completed = experiment.trials_completed + 1
+
+        db.session.commit()
 
     if experiment.trials_completed < len(experiment.trials.all()):
         # Experiment not completed yet
+
+        print 'Trials completed so far ', experiment.trials_completed
+        print 'Total trials to complete ', len(experiment.trials.all())
+
         next_trial_num = experiment.trials_completed + 1
+
         next_trial = models.Trial.query.filter_by( experiment_id =
                                                   experiment_id,
                                                   sequence_number =
@@ -170,11 +209,21 @@ def experiment_trial(experiment_id):
                                    user = g.user
                                   )
 
-    return render_template('experiment_trial.html',
-                           title = 'Experiment trial',
-                           user = g.user,
-                           experiment_id = experiment.id,
-                           trial = next_trial,
-                           matrix = next_matrix
-                          )
+
+        form.experiment_id = experiment_id
+        form.experiment_trials_count = len(experiment.trials.all())
+        form.trial_id = next_trial.id
+        form.trial_matrix = next_matrix
+        form.trial_matrix_data_type = next_matrix.data_type
+        form.trial_cue_row = next_trial.cue_row
+        form.trial_duration = next_trial.duration
+        form.trial_sequence_num = next_trial.sequence_number
+
+        return render_template('experiment_trial.html',
+                               title = 'Experiment trial',
+                               user = g.user,
+                               form = form
+                              )
+    else:
+        return redirect(url_for('dashboard'))
 
