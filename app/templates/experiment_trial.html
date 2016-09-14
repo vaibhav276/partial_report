@@ -7,14 +7,14 @@
   <div class="row">
     {% if form %}
     <form action="" method="post" name="{{ url_for('experiment_trial',
-    experiment_id = form.experiment_id) }}">
+    experiment_id = form.experiment_id) }}" style="display: none">
       {{ form.hidden_tag() }}
 
     <p>{{ form.experiment_id.label }}: {{ form.experiment_id }}
     <p>{{ form.trial_id.label }}: {{ form.trial_id }}
     <p>{{ form.trial_duration.label }}: {{ form.trial_duration }}
     <p>{{ form.trial_matrix.label }}: {{ form.trial_matrix.data }}
-    <p>{{ form.trial_matrix_data_type.label }}: {{ form.trial_matrix.data_type }}
+    <p>{{ form.trial_matrix_size.label }}: {{ form.trial_matrix_size }}
     <p>{{ form.trial_cue_row.label }}: {{ form.trial_cue_row }}
     <p>{{ form.trial_sequence_num.label }}: {{ form.trial_sequence_num }} / {{
     form.experiment_trials_count }}
@@ -24,6 +24,18 @@
     {% endfor %} <br>
     <p><input type="submit" value="Submit"></p>
     </form>
+    <canvas id="trial_canvas" width="200" height="200" class="center-block" />
+    <link href="{{ url_for('static', filename='css/experiment_trial.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/experiment_trial.js') }}"></script>
+    <script>
+      showTrialMatrix( $('#trial_canvas'),
+          $('#trial_response'),
+          '{{ form.trial_matrix.data }}',
+          {{ form.trial_matrix_size }},
+          {{ form.trial_cue_row }},
+          {{ form.trial_duration }}
+          );
+    </script>
     {% endif %}
   </div>
 </div>

@@ -29,11 +29,11 @@ class ExperimentForm(Form):
                             validators=[DataRequired()])
 
 class ExperimentTrialForm(Form):
-    trial_id = StringField('Trial ID')
-    matrix_size = TextField('Matrix Size')
     experiment_id = TextField('Experiment ID')
     experiement_trials_count = TextField('Experiment trials count')
+    trial_id = StringField('Trial ID')
     trial_matrix = TextField('Matrix')
+    trial_matrix_size = TextField('Matrix Size')
     trial_matrix_data_type = TextField('Data type')
     trial_cue_row = TextField('Cue Row')
     trial_duration = TextField('Duration')

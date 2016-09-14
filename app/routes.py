@@ -230,6 +230,7 @@ def experiment_trial(experiment_id):
         form.trial_id = next_trial.id
         form.trial_matrix = next_matrix
         form.trial_matrix_data_type = next_matrix.data_type
+        form.trial_matrix_size = next_matrix.size
         form.trial_cue_row = next_trial.cue_row
         form.trial_duration = next_trial.duration
         form.trial_sequence_num = next_trial.sequence_number
