@@ -1,6 +1,7 @@
 from app import db
 import uuid
 from datetime import datetime
+from sqlalchemy import func
 import random
 
 class User(db.Model):
@@ -47,7 +48,8 @@ class Experiment(db.Model):
     id = db.Column('id', db.String(64), primary_key=True, default=uuid.uuid4())
     user_id = db.Column('user_id', db.String(64), db.ForeignKey('pr_user.id') )
     trials_completed = db.Column('trials_completed', db.Integer(), default=0)
-    creation_date = db.Column('creation_date', db.Date, default=datetime.utcnow)
+    creation_date = db.Column('creation_date', db.DateTime(),
+                              default=datetime.utcnow)
 
     trials = db.relationship('Trial', backref='experiment', lazy='dynamic')
 
@@ -86,7 +88,7 @@ class Trial(db.Model):
     duration = db.Column('duration', db.Integer())
     cue_row = db.Column('cue_row', db.Integer())
     response = db.Column('response', db.String(8))
-    match_chars_num = db.Column('match_chars_num', db.Integer())
+    score = db.Column('score', db.Integer())
 
     matrix = db.relationship('Matrix', backref='trial', lazy='dynamic')
 

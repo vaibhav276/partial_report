@@ -104,16 +104,33 @@ def logout():
 def dashboard():
     return render_template('dashboard.html',
                            title = 'Dashboard',
+                           active_link = 'home',
                            user = g.user)
 
 @app.route('/history')
 @login_required
 def history():
-    experiments = models.User.query.filter_by(id = g.user.id).first().experiments.all()
+    experiments = models.Experiment.query.filter_by(user_id = g.user.id).all()
     return render_template('history.html',
                            title = 'History',
                            user = g.user,
+                           active_link = 'history',
                            experiments = experiments
+                          )
+
+@app.route('/history/<string:experiment_id>')
+@login_required
+def history_experiment(experiment_id):
+    trials = models.Trial.query.filter_by(experiment_id = experiment_id).all()
+    experiment = models.Experiment.query.filter_by(id = experiment_id).first()
+    experiment_date = experiment.creation_date
+    return render_template('history.html',
+                           title = 'History',
+                           user = g.user,
+                           active_link = 'history',
+                           experiment_id = experiment_id,
+                           experiment_date = experiment_date,
+                           trials = trials
                           )
 
 @app.route('/experiment', methods=['GET', 'POST'])
@@ -126,6 +143,7 @@ def experiment():
                        data_type = int(form.data_type.data),
                        matrix_size = int(form.matrix_size.data)
                       )
+        experiment.user_id = g.user.id
 
         db.session.add(experiment)
         for (trial, matrix) in generated_tuples:
@@ -171,10 +189,10 @@ def experiment_trial(experiment_id):
 
         trial.response = form.trial_response.data
         trial_matrix = trial.matrix.first()
-        trial.match_chars_num = count_matches(matrix = trial_matrix.data,
-                                              size = int(trial_matrix.size),
-                                              cue_row = int(trial.cue_row),
-                                              response = form.trial_response.data)
+        trial.score = count_matches(matrix = trial_matrix.data,
+                                    size = int(trial_matrix.size),
+                                    cue_row = int(trial.cue_row),
+                                    response = form.trial_response.data)
 
         experiment.trials_completed = experiment.trials_completed + 1
 
@@ -182,9 +200,6 @@ def experiment_trial(experiment_id):
 
     if experiment.trials_completed < len(experiment.trials.all()):
         # Experiment not completed yet
-
-        print 'Trials completed so far ', experiment.trials_completed
-        print 'Total trials to complete ', len(experiment.trials.all())
 
         next_trial_num = experiment.trials_completed + 1
 
