@@ -24,13 +24,15 @@
     {% endfor %} <br>
     <p><input type="submit" value="Submit"></p>
     </form>
-    <canvas id="trial_canvas" width="200" height="200" class="center-block" />
+    <canvas id="trial_canvas" width="{{ form.trial_matrix_size * 100 }}" height="{{
+    form.trial_matrix_size * 100 }}"class="center-block" />
+    <canvas id="response_canvas" width="{{ form.trial_matrix_size * 100 }}"
+                                 height="100 "class="center-block" />
     <link href="{{ url_for('static', filename='css/experiment_trial.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/experiment_trial.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/riffwave.js') }}"></script>
     <script>
-      showTrialMatrix( $('#trial_canvas'),
-          $('#trial_response'),
-          '{{ form.trial_matrix.data }}',
+      startTrial('{{ form.trial_matrix.data }}',
           {{ form.trial_matrix_size }},
           {{ form.trial_cue_row }},
           {{ form.trial_duration }}

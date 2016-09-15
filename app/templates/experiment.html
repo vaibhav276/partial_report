@@ -14,7 +14,7 @@
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
       </p>
-      {{form.matrix_size.label}}: {{ form.matrix_size(size=5) }}<br>
+      {{form.matrix_size.label}}: {{ form.matrix_size }}<br>
       {% for error in form.matrix_size.errors %}
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
@@ -24,7 +24,7 @@
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
       </p>
-      {{form.num_trials.label}}: {{ form.num_trials(size=5) }}<br>
+      {{form.num_trials.label}}: {{ form.num_trials }}<br>
       {% for error in form.num_trials.errors %}
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
