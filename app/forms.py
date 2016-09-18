@@ -18,11 +18,8 @@ class RegisterForm(Form):
 
 class ExperimentForm(Form):
     data_type_ = [('1', 'Alphabets'), ('2', 'Numbers')]
-    presets_ = [('1', 'Preset 1')]
     matrix_sizes_ = [('1', '1'), ('2', '2'), ('3', '3'), ('4', '4')]
 
-    preset = SelectField('Preset', choices=presets_,
-                         validators=[DataRequired()])
     num_trials = StringField('Number of trials per segment (there are 4 \
                              segments)', validators=[DataRequired()])
     matrix_size = SelectField('Matrix Size', choices=matrix_sizes_,
@@ -32,7 +29,8 @@ class ExperimentForm(Form):
 
 class ExperimentTrialForm(Form):
     experiment_id = TextField('Experiment ID')
-    experiement_trials_count = TextField('Experiment trials count')
+    experiment_trials_count = TextField('Experiment trials count')
+    experiment_training = TextField('Experiment trials count')
     trial_id = StringField('Trial ID')
     trial_matrix = TextField('Matrix')
     trial_matrix_size = TextField('Matrix Size')

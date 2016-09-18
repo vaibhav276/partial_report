@@ -5,7 +5,29 @@
 {% include "navbar.html" %}
 <div class="container">
   <div class="row">
-    <a class="btn btn-primary" href="{{ url_for('experiment') }}">Start experiment</a>
+    <div class="col-sm-6">
+      <h1>Training</h1>
+      <p>The training module contains a walkthrough of the experience, and is
+      necessary to understand the flow.
+      <p>It is your playground to make yourself comfortable with the system.
+      The responses in training will not be reported.
+      <p>Attempt as many times as you like before going into the real experiment,
+      where there are no on-screen tips. Make sure you complete the training
+      for the configuration of the expriment that you want to appear for.
+      <br><br>
+    <a class="btn btn-success" href="{{ url_for('training') }}">Start training</a>
+    </div>
+    <div class="col-sm-6">
+      <h1>Experiment</h1>
+      <p>The experiment module contains only the experiment.
+      <p>It has a distraction free environment to focus only on the stimulus
+      in order to maximize performance.
+      <p>Hence you must complete training for the experiment configuration that you
+      want to perform, otherwise you will have no clue about the controls, cues
+      and flow of the experiment, and the experiment will be a failure.
+      <br><br>
+    <a class="btn btn-primary" href="{{ url_for('experiment') }}">Start new experiment</a>
+    </div>
   </div>
 </div>
 {% endblock %}

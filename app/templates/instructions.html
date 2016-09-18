@@ -1,0 +1,72 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include "navbar.html" %}
+<div class="container">
+  <div class="row">
+    <h1> {{ title }} </h1>
+    <p>You will see a square matrix of alphabets or numbers depending on your
+    chosen experiment configuration.
+
+    <p>The matrix shown will be flashed only for a few milliseconds, just
+    enough for you to notice it.
+
+    <p>Once the matrix disappears, you will hear a tone that will be your cue to
+    one of the rows of the matrix. 
+    {% if training %}
+    You will get to train yourself to the tones and associate them to rows of
+    matrix during the training.
+    {% else %}
+    If you haven't done the training for this configuration of experiment, it
+    is highly recommended to go through it first and then return to the
+    experiment because you will not get any training within the experiment to
+    help you recognize the tones. 
+    {% endif %}
+    <p> Once you hear the tone, which represents a particular row in the
+    matrix, you need to type in that particular row in the space provided
+    during the trials.
+
+    <p>It is normal to forget parts of the matrix during the trial, so try to
+    respond with whatever parts you remember correctly and <mark>make guesses for the
+      parts that you do not remember</mark>. It is important to respond as soon as you
+    hear the tone because there are higher chances of recalling the answer
+    correctly if you try to recall it immediately.
+
+    <p>Make sure that your response contains symbols in the same sequence as
+    the original matrix. If you change the position of a symbol, the response for
+    that position becomes incorrect.
+
+    <p>Remember that symbols will not be repeated in any given row
+
+    <h2>Controls and flow</h2>
+    <p>Each trial will begin by displaying a small dot in the center, to
+    indicate the center of matrix which is about to be displayed. For best
+    results, maintain a relaxed focus on a wide area around this dot.
+
+    <p>After a couple of seconds, the matrix will flash automatically, followed
+    by the tone for cue.
+
+    <p>As soon as you hear the cue, a prompt will appear for your response. It
+    can be identified by a blinking cursor just below the matrix displayed.
+
+    <p>Enter your response now and press <span class="label
+    label-default">Enter</span> to submit it.
+
+    <p>That's it. Everything happens automatically except the submission of
+    response.
+
+    <h4>Find a quiet place and start the trials once you are comfortable with
+      the instructions. Headphones are recommended for accurate recognition of
+    tones</h4>
+
+    <p><a class="btn btn-primary" href="{{ url_for('experiment_trial',
+    experiment_id = experiment_id) }}">
+      {% if training %}OK, lets do the training
+      {% else %}I have done the training for this configuration. Lets start the
+      experiment !
+      {% endif %}
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -50,6 +50,7 @@ class Experiment(db.Model):
     trials_completed = db.Column('trials_completed', db.Integer(), default=0)
     creation_date = db.Column('creation_date', db.DateTime(),
                               default=datetime.utcnow)
+    training = db.Column('training', db.Boolean(), default=False)
 
     trials = db.relationship('Trial', backref='experiment', lazy='dynamic')
 

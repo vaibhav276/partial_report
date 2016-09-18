@@ -7,36 +7,91 @@
   <div class="row">
     {% if form %}
     <form action="" method="post" name="{{ url_for('experiment_trial',
-    experiment_id = form.experiment_id) }}" style="display: none">
+    experiment_id = form.experiment_id) }}">
       {{ form.hidden_tag() }}
-
-    <p>{{ form.experiment_id.label }}: {{ form.experiment_id }}
-    <p>{{ form.trial_id.label }}: {{ form.trial_id }}
-    <p>{{ form.trial_duration.label }}: {{ form.trial_duration }}
-    <p>{{ form.trial_matrix.label }}: {{ form.trial_matrix.data }}
-    <p>{{ form.trial_matrix_size.label }}: {{ form.trial_matrix_size }}
-    <p>{{ form.trial_cue_row.label }}: {{ form.trial_cue_row }}
-    <p>{{ form.trial_sequence_num.label }}: {{ form.trial_sequence_num }} / {{
-    form.experiment_trials_count }}
-    <p>{{ form.trial_response.label }} : {{ form.trial_response }}
-    {% for error in form.trial_response.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %} <br>
-    <p><input type="submit" value="Submit"></p>
+      <div id="form_elements" style="display: none">
+      <p>{{ form.experiment_id.label }}: {{ form.experiment_id }}
+      <p>{{ form.trial_id.label }}: {{ form.trial_id }}
+      <p>{{ form.trial_duration.label }}: {{ form.trial_duration }}
+      <p>{{ form.trial_matrix.label }}: {{ form.trial_matrix.data }}
+      <p>{{ form.trial_matrix_size.label }}: {{ form.trial_matrix_size }}
+      <p>{{ form.trial_cue_row.label }}: {{ form.trial_cue_row }}
+      <p>{{ form.trial_sequence_num.label }}: {{ form.trial_sequence_num }} / {{
+      form.experiment_trials_count }}
+      <p>{{ form.trial_response.label }} : {{ form.trial_response }}
+      {% for error in form.trial_response.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %} <br>
+      </div>
+      <p><input id="submit_btn" type="submit" value="Submit" style="display:
+      none"></p>
     </form>
     <canvas id="trial_canvas" width="{{ form.trial_matrix_size * 100 }}" height="{{
-    form.trial_matrix_size * 100 }}"class="center-block" />
-    <canvas id="response_canvas" width="{{ form.trial_matrix_size * 100 }}"
-                                 height="100 "class="center-block" />
+    form.trial_matrix_size * 100 }}" class="center-block"></canvas>
+  </div>
+  <br><br>
+  <div class="row">
+    <input id="response_box" type="text" class="center-block" maxlength="{{
+    form.trial_matrix_size }}" size="{{ (form.trial_matrix_size * 3) }}"
+     onKeyUp="updateResponseLength({{ form.trial_matrix_size }});"></input>
+    <br>
+    <button id="fake_submit_btn" class="btn btn-default pull-right footer
+    navbar-fixed-bottom" style="display: none">Press enter to submit </button>
+  </div>
+  {% if form.experiment_training %}
+  <div class="row">
+    <h2>Training instructions</h2>
+    {% if form.trial_cue_row == 1 %}
+    {% set row_str = 'First' %}
+    {% elif form.trial_cue_row == 2 %}
+    {% set row_str = 'Second' %}
+    {% elif form.trial_cue_row == 3 %}
+    {% set row_str = 'Third' %}
+    {% elif form.trial_cue_row == 4 %}
+    {% set row_str = 'Fourth' %}
+    {% elif form.trial_cue_row == 5 %}
+    {% set row_str = 'Fifth' %}
+    {% endif %}
+    <h4> This tone is for <span class="label label-info">{{ row_str }}
+        row</span>.</h4>
+    <p>Type the {{ form.trial_matrix_size }} symbols that you saw in {{ row_str }} row
+    of the matrix.
+    <p>Listen again |
+    {% for cue_row in range(form.trial_matrix_size) %}
+    {% if cue_row == 0 %}
+    <a href="#" id="listen_again_1" class="btn btn-xs">First row</a> |
+    {% elif cue_row == 1 %}
+    <a href="#" id="listen_again_2" class="btn btn-xs">Second row</a> |
+    {% elif cue_row == 2 %}
+    <a href="#" id="listen_again_3" class="btn btn-xs">Third row</a> |
+    {% elif cue_row == 3 %}
+    <a href="#" id="listen_again_4" class="btn btn-xs">Fourth row</a> |
+    {% elif cue_row == 4 %}
+    <a href="#" id="listen_again_5" class="btn btn-xs">Fifth row</a> |
+    {% endif %}
+    {% endfor %}
+    <p><a id="btn_repeat_trial" class="btn btn-success btn-s">Run trial again</a>
+  </div>
+  {% endif %}
     <link href="{{ url_for('static', filename='css/experiment_trial.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/experiment_trial.js') }}"></script>
     <script src="{{ url_for('static', filename='js/riffwave.js') }}"></script>
     <script>
-      startTrial('{{ form.trial_matrix.data }}',
-          {{ form.trial_matrix_size }},
-          {{ form.trial_cue_row }},
-          {{ form.trial_duration }}
-          );
+      $(document).ready(function() {
+        startTrial('{{ form.trial_matrix.data }}',
+            {{ form.trial_matrix_size }},
+            {{ form.trial_cue_row }},
+            {{ form.trial_duration }}
+            );
+      });
+
+      $('#btn_repeat_trial').click(function() {
+        startTrial('{{ form.trial_matrix.data }}',
+            {{ form.trial_matrix_size }},
+            {{ form.trial_cue_row }},
+            {{ form.trial_duration }}
+            );
+      });
     </script>
     {% endif %}
   </div>

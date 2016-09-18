@@ -121,7 +121,8 @@ def history():
 @app.route('/history/<string:experiment_id>')
 @login_required
 def history_experiment(experiment_id):
-    trials = models.Trial.query.filter_by(experiment_id = experiment_id).all()
+    trials = models.Trial.query.filter_by(experiment_id =
+                                          experiment_id).order_by(models.Trial.sequence_number).all()
     experiment = models.Experiment.query.filter_by(id = experiment_id).first()
     experiment_date = experiment.creation_date
     return render_template('history.html',
@@ -131,6 +132,35 @@ def history_experiment(experiment_id):
                            experiment_id = experiment_id,
                            experiment_date = experiment_date,
                            trials = trials
+                          )
+
+@app.route('/training', methods=['GET', 'POST'])
+@login_required
+def training():
+    form = ExperimentForm()
+    if form.validate_on_submit():
+        experiment = models.Experiment()
+        generated_tuples = experiment.generate(num_trials = int(form.num_trials.data),
+                       data_type = int(form.data_type.data),
+                       matrix_size = int(form.matrix_size.data)
+                      )
+        experiment.user_id = g.user.id
+        experiment.training = True
+
+        db.session.add(experiment)
+        for (trial, matrix) in generated_tuples:
+            db.session.add(trial)
+            db.session.add(matrix)
+
+        db.session.commit()
+
+        return redirect(url_for('instructions', experiment_id =
+                                str(experiment.id)))
+
+    return render_template('training.html',
+                           title = 'Training',
+                           form = form,
+                           user = g.user
                           )
 
 @app.route('/experiment', methods=['GET', 'POST'])
@@ -152,7 +182,7 @@ def experiment():
 
         db.session.commit()
 
-        return redirect(url_for('experiment_trial', experiment_id =
+        return redirect(url_for('instructions', experiment_id =
                                 str(experiment.id)))
 
     return render_template('experiment.html',
@@ -161,7 +191,29 @@ def experiment():
                            user = g.user
                           )
 
+@app.route('/instructions/<string:experiment_id>/', methods=['GET', 'POST'])
+@login_required
+def instructions(experiment_id):
+    experiment = models.Experiment.query.filter_by( id = experiment_id
+                                                  ).first()
+
+    if experiment is None:
+        flash('Experiment id %s not found. Try creating a new experiment' %
+              (experiment_id)
+             )
+        return redirect(url_for('dashboard'))
+
+    training = experiment.training
+
+    return render_template('instructions.html',
+                           title = 'Instructions',
+                           user = g.user,
+                           experiment_id = experiment_id,
+                           training = training
+                          )
+
 @app.route('/experiment/<string:experiment_id>/trial', methods=['GET', 'POST'])
+@login_required
 def experiment_trial(experiment_id):
     experiment = models.Experiment.query.filter_by( id = experiment_id
                                                   ).first()
@@ -227,6 +279,7 @@ def experiment_trial(experiment_id):
 
         form.experiment_id = experiment_id
         form.experiment_trials_count = len(experiment.trials.all())
+        form.experiment_training = experiment.training
         form.trial_id = next_trial.id
         form.trial_matrix = next_matrix
         form.trial_matrix_data_type = next_matrix.data_type

@@ -1,3 +1,13 @@
 canvas#trial_canvas {
-  border: 1px solid red;
+  border: 0px solid red;
+}
+
+input#response_box {
+  text-transform: uppercase;
+  letter-spacing: 50px;
+  font: 48px courier;
+  text-align: center;
+  background: white;
+  outline: none;
+  border: none;
 }

@@ -5,41 +5,34 @@ settings = {
   textWidth: 20,
   fixationDuration: 2000,
   displayDuration: 150,
-  frequencies: [640, 440, 340, 240]
+  frequencies: [740, 580, 440, 340, 240]
 }
 
 var canvas = $('#trial_canvas');
-var responseCanvas = $('#response_canvas');
+var responseBox = $('#response_box');
+var responseInput = $('#trial_response');
+var fakeSubmitBtn = $('#fake_submit_btn');
+var submitBtn = $('#submit_btn');
 
 function startTrial(
     matrix,
     size,
     cueRow,
     duration) {
-  console.debug(matrix);
-  console.debug(size);
-  console.debug(cueRow);
-  console.debug(duration);
   showFixationPoint(matrix, size, cueRow, duration);
 }
 
-function showFixationPoint( matrix, size, cueRow, duration) {
+function showFixationPoint(matrix, size, cueRow, duration) {
   var canvasElem = canvas.get(0);
   var ctx = canvasElem.getContext('2d');
   ctx.fillRect(canvas.width()/2 - 5, canvas.height()/2 - 5, 10, 10);
-  window.setTimeout(showTrialMatrix, settings.fixationDuration, canvas, matrix, size, cueRow, duration);
+  window.setTimeout(showTrialMatrix, settings.fixationDuration, matrix, size, cueRow, duration);
 }
 
 function showTrialMatrix( matrix,
     size,
     cueRow,
     duration) {
-
-  //var width = size * settings.elemWidth;
-  //var height = size * settings.elemHeight;
-  //canvas.width(width);
-  //canvas.height(height);
-
   var elementPositions = findElementPositions(matrix.length, size);
   var canvasElem = canvas.get(0);
   var ctx = canvasElem.getContext('2d');
@@ -61,8 +54,28 @@ function hideTrialMatrix(canvas, cueRow, duration) {
 }
 
 function playTone(cueRow) {
-	audio.draw_and_play(settings.frequencies[cueRow]);
+	audio.draw_and_play(settings.frequencies[cueRow - 1]);
+  readResponse();
 }
+
+function readResponse() {
+  responseBox.focus();
+}
+
+function updateResponseLength(size) {
+  var len = responseBox.val().length;
+  if (len == size) {
+    fakeSubmitBtn.show();
+    fakeSubmitBtn.focus();
+  } else {
+    fakeSubmitBtn.hide();
+  }
+}
+
+fakeSubmitBtn.click(function() {
+  responseInput.val(responseBox.val().toUpperCase());
+  submitBtn.click();
+});
 
 var audio = {
 	 draw_and_play: function(frequency) {
@@ -131,3 +144,19 @@ function findElementPositions(numElements, size) {
 
   return positions;
 }
+
+$('#listen_again_1').click(function() {
+	audio.draw_and_play(settings.frequencies[0]);
+});
+$('#listen_again_2').click(function() {
+	audio.draw_and_play(settings.frequencies[1]);
+});
+$('#listen_again_3').click(function() {
+	audio.draw_and_play(settings.frequencies[2]);
+});
+$('#listen_again_4').click(function() {
+	audio.draw_and_play(settings.frequencies[k]);
+});
+$('#listen_again_5').click(function() {
+	audio.draw_and_play(settings.frequencies[4]);
+});

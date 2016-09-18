@@ -13,6 +13,7 @@
       <th>Trials completed</th>
       <th>Total trials</th>
       <th>Status</th>
+      <th>Training/Real</th>
       </thead>
       <tbody>
     {% for experiment in experiments %}
@@ -27,6 +28,9 @@
         {% else %}
         <span class="label label-danger">Incomplete</span>
         {% endif %}</td>
+      <td> {% if experiment.training %} <span class="label
+      label-success">Training</span> {% else %} <span class="label
+      label-primary">Real</span> {% endif %} </td>
     </tr>
     {% endfor %}
       </tbody>

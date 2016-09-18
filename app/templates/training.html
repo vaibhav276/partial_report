@@ -17,7 +17,7 @@
     <br><br>
   </div>
   <div class="row">
-    <form action="" method="post" name="{{ url_for('experiment') }}">
+    <form action="" method="post" name="{{ url_for('training') }}">
       {{ form.hidden_tag() }}
       <p>
       {{form.matrix_size.label}}: {{ form.matrix_size }}<br>
@@ -35,7 +35,7 @@
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
       </p>
-      <script src="static/js/experiment_form.js"></script>
+      <script src="static/js/training_form.js"></script>
       <p><input type="submit" value="Start"></p>
     </form>
   </div>
