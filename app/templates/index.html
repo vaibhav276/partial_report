@@ -2,12 +2,19 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <h1>{{ title }}</h1>
+    <h1>Partial Report: Cognitive Science Experiment</h1>
+    {% include "about_experiment.html" %}
+  </div>
+
+  <div class="row">
     {% if not user.username %}
-    Please <a href="{{ url_for('login') }}">login</a> or <a href="{{
-    url_for('register') }}"">register</a>
+    <div class="center-block">
+      <a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+    </div>
     {% else %}
-      Go to <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <div class="center-block">
+      <a class="btn btn-success" href="{{ url_for('dashboard') }}">Go to My Dashboard</a>
+    </div>
     {% endif %}
   </div>
 </div>

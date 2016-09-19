@@ -5,6 +5,7 @@ from .forms import LoginForm, RegisterForm, ExperimentForm, ExperimentTrialForm
 from utils import encrypt_password, verify_password, count_matches
 from flask.ext.login import login_user, logout_user, current_user, \
 login_required
+from markupsafe import Markup
 
 @lm.user_loader
 def load_user(id):
@@ -110,12 +111,26 @@ def dashboard():
 @app.route('/history')
 @login_required
 def history():
-    experiments = models.Experiment.query.filter_by(user_id = g.user.id).all()
+    experiments = models.Experiment.query.filter_by(user_id =
+                    g.user.id).order_by(models.Experiment.creation_date).all()
+
     return render_template('history.html',
                            title = 'History',
                            user = g.user,
                            active_link = 'history',
                            experiments = experiments
+                          )
+
+@app.route('/about')
+@login_required
+def about():
+    experiments = models.Experiment.query.filter_by(user_id =
+                    g.user.id).order_by(models.Experiment.creation_date).all()
+
+    return render_template('about.html',
+                           title = 'About',
+                           user = g.user,
+                           active_link = 'about'
                           )
 
 @app.route('/history/<string:experiment_id>')
@@ -125,13 +140,48 @@ def history_experiment(experiment_id):
                                           experiment_id).order_by(models.Trial.sequence_number).all()
     experiment = models.Experiment.query.filter_by(id = experiment_id).first()
     experiment_date = experiment.creation_date
+    matrix_size = trials[0].matrix.first().size
+
+    from plotly.offline import plot
+    from plotly.graph_objs import Scatter, Layout, Figure
+    # plot = plot([Scatter(x=[1, 2, 3], y=[3.1, 1.5, 6])], output_type='div')
+
+    data_x, data_y = zip(*db.session.query(models.Trial.duration,
+                     db.func.avg(models.Trial.score)).filter_by(experiment_id =
+                    experiment_id).group_by(models.Trial.duration).order_by(models.Trial.duration).all())
+
+    plot_x = list(data_x)
+    plot_y = []
+
+    for y in list(data_y):
+        if y is not None:
+            plot_y.append(float(y * 100 / matrix_size))
+        else:
+            plot_y.append(0)
+
+    #plot = plot([Scatter(x=plot_x, y=plot_y)], output_type='div')
+    layout = Layout(
+        title = 'Plot title',
+        xaxis = dict(
+            title = 'Cue duration (ISI) in milliseconds'
+        ),
+        yaxis = dict(
+            title = 'Percentage of correct responses'
+        )
+    )
+    trace = Scatter(x=plot_x, y=plot_y)
+    data = [trace]
+    figure = Figure(data = data, layout = layout)
+    plot = plot(figure, output_type='div')
+
     return render_template('history.html',
                            title = 'History',
                            user = g.user,
                            active_link = 'history',
                            experiment_id = experiment_id,
                            experiment_date = experiment_date,
-                           trials = trials
+                           trials = trials,
+                           plot = Markup(plot)
                           )
 
 @app.route('/training', methods=['GET', 'POST'])

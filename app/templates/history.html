@@ -30,7 +30,7 @@
         {% endif %}</td>
       <td> {% if experiment.training %} <span class="label
       label-success">Training</span> {% else %} <span class="label
-      label-primary">Real</span> {% endif %} </td>
+      label-primary">Experiment</span> {% endif %} </td>
     </tr>
     {% endfor %}
       </tbody>
@@ -40,29 +40,41 @@
       <a href="{{ url_for('history') }}" class="pull-right btn btn-primary"> &lt; Back </a>
     </h4>
     <br>
-    <table class="table table-condensed table-hover">
-      <thead>
-      <th> Matrix </th>
-      <th> Cue row </th>
-      <th> Duration </th>
-      <th> Response </th>
-      <th> Score </th>
-      </thead>
-      <tbody>
-      {% for trial in trials %}
-      <tr>
-        <td> {{ trial.matrix.first().data }}</td>
-        <td> {{ trial.cue_row }}</td>
-        <td> {{ trial.duration }}</td>
-        <td> {{ trial.response }}</td>
-        <td> <span class="badge">{{ trial.score }}</span> </td>
-      </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+    <ul class="nav nav-tabs" id="history_tab">
+      <li class="active"><a href="#section_plot">Plot</a></li>
+      <li ><a href="#section_data">Underlying Data</a></li>
+    </ul>
+    <div class="tab-content">
+       <div id="section_plot" class="tab-pane fade in active">
+         {{ plot }}
+       </div>
+       <div id="section_data" class="tab-pane fade in">
+         <table class="table table-condensed table-hover">
+           <thead>
+             <th> Matrix </th>
+             <th> Cue row </th>
+             <th> Duration </th>
+             <th> Response </th>
+             <th> Score </th>
+           </thead>
+           <tbody>
+             {% for trial in trials %}
+             <tr>
+               <td> {{ trial.matrix.first().data }}</td>
+               <td> {{ trial.cue_row }}</td>
+               <td> {{ trial.duration }}</td>
+               <td> {{ trial.response }}</td>
+               <td> <span class="badge">{{ trial.score }}</span> </td>
+             </tr>
+             {% endfor %}
+           </tbody>
+         </table>
+       </div>
+    </div>
     {% else %}
     <h4> No experiments found for you </h4>
     {% endif %}
   </div>
 </div>
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,13 @@
+<!-- extend from base layout -->
+                           experiments = experiments
+{% extends "base.html" %}
+
+{% block content %}
+{% include "navbar.html" %}
+<div class="container">
+  <div class="row">
+    <h1>Partial Report: Cognitive Science Experiment</h1>
+    {% include "about_experiment.html" %}
+  </div>
+</div>
+{% endblock %}
