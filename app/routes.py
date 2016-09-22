@@ -73,6 +73,7 @@ def register():
     if form.validate_on_submit():
         user = models.User.query.filter_by(username = \
                                            str(form.username.data)).first()
+
         if user is not None:
             flash('Username %s already exists. Try another one.' \
                   % str(form.username.data))
@@ -89,6 +90,7 @@ def register():
             db.session.commit()
             flash('Registration successful for username ' + form.username.data)
             return redirect(url_for('index'))
+
     return render_template('register.html',
                            title = 'Register',
                            form = form,

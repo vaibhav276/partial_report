@@ -9,7 +9,7 @@
     <form action="" method="post" name="register">
       {{ form.csrf_token }}
       <p>
-      {{form.first_name.label}}: {{ form.first_name(size=20) }}<br>
+      First Name: {{ form.first_name(size=20) }}<br>
       {% for error in form.first_name.errors %}
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
@@ -25,7 +25,7 @@
       {% for error in form.age.errors %}
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
-      Gender: {{ form.gender(size=3) }}<br>
+      Gender: {{ form.gender }}<br>
       {% for error in form.gender.errors %}
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
@@ -34,7 +34,7 @@
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %} <br>
       </p>
-      <p><input type="submit" value="Register"></p>
+      <p><input class="btn btn-primary" type="submit" value="Register"></p>
     </form>
   </div>
 </div>
