@@ -1,6 +1,6 @@
 from flask.ext.wtf import Form, validators
 from wtforms import StringField, PasswordField, BooleanField, SelectField, \
-        TextField, RadioField
+        TextField, RadioField, IntegerField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 class LoginForm(Form):
@@ -18,7 +18,7 @@ class RegisterForm(Form):
                                                      Length(min=1,max=20)])
     username = StringField('Username', validators=[DataRequired(),
                                                    Length(min=1,max=20)])
-    age = StringField('Age', validators=[DataRequired(),
+    age = IntegerField('Age', validators=[DataRequired(),
                                          NumberRange(min=18,max=100)])
     gender = RadioField('Gender', choices=gender_, validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(),
@@ -28,7 +28,7 @@ class ExperimentForm(Form):
     data_type_ = [('1', 'Alphabets'), ('2', 'Numbers')]
     matrix_sizes_ = [('1', '1'), ('2', '2'), ('3', '3'), ('4', '4')]
 
-    num_trials = StringField('Number of trials per segment (there are 4 \
+    num_trials = IntegerField('Number of trials per segment (there are 4 \
                              segments)', validators=[DataRequired(),
                                                      NumberRange(min=1,max=20)])
     matrix_size = SelectField('Matrix Size', choices=matrix_sizes_,
